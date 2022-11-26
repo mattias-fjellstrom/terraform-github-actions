@@ -1,0 +1,39 @@
+name: Reusable Terraform workflow
+
+on:
+  workflow_call:
+    inputs:
+      working-directory:
+        type: string
+        required: true
+      parameters:
+        type: string
+        required: false
+    outputs:
+      infrastructure_output:
+        description: Output from Terraform
+        value: ${{ jobs.terraform.outputs.infrastructure_output }}
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+      - name: Create terraform.tfvars file
+        run: echo '${{ inputs.parameters }}' >> terraform.tfvars
+      - run: terraform init
+      - run: terraform validate
+      - run: terraform plan -no-color -out "plan.out"
+      - run: terraform apply plan.out -no-color
+      - id: output-step
+        run: |
+          outputs=$(terraform output infrastructure_output)
+          echo "infrastructure_output=$outputs" >> $GITHUB_OUTPUT
+    outputs:
+      infrastructure_output: ${{ steps.output-step.outputs.infrastructure_output }}

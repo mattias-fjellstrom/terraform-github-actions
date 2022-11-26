@@ -1,0 +1,44 @@
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "terraform/**.tf"
+
+jobs:
+  architecture01:
+    name: Set up architecture01
+    uses: .github/workflows/reusable.yml
+    with:
+      working-directory: terraform/architecture01
+      parameters: |
+        first_pet_prefix="snuffles"
+        second_pet_prefix="puffles"
+
+  architecture01-outputs:
+    name: Parse outputs from architecture01
+    needs: architecture01
+    runs-on: ubuntu-latest
+    steps:
+      - id: output-step
+        run: |
+          first_pet_id=$(echo ${{ needs.architecture01.outputs.infrastructure_output }} | jq -r .first_pet_id)
+          echo "first_pet_id=$first_pet_id" >> $GITHUB_OUTPUT
+
+          second_pet_id=$(echo ${{ needs.architecture01.outputs.infrastructure_output }} | jq -r .second_pet_id)
+          echo "second_pet_id=$second_pet_id" >> $GITHUB_OUTPUT
+    outputs:
+      first_pet_id: ${{ steps.output_step.outputs.first_pet_id }}
+      second_pet_id: ${{ steps.output_step.outputs.second_pet_id }}
+
+  architecture02:
+    name: Set up architecture02
+    uses: .github/workflows/reusable.yml
+    needs: architecture01-outputs
+    with:
+      working-directory: terraform/architecture02
+      parameters: |
+        pet_ids=[
+          "${{ needs.architecture01-outputs.outputs.first_pet_id }}",
+          "${{ needs.architecture01-outputs.outputs.second_pet_id }}"
+        ]
