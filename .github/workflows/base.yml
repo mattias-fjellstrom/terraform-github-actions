@@ -31,8 +31,8 @@ jobs:
           second_pet_id=$(echo ${{ needs.architecture01.outputs.infrastructure_output }} | jq -r .second_pet_id)
           echo "second_pet_id=$second_pet_id" >> $GITHUB_OUTPUT
     outputs:
-      first_pet_id: ${{ steps.output_step.outputs.first_pet_id }}
-      second_pet_id: ${{ steps.output_step.outputs.second_pet_id }}
+      first_pet_id: ${{ steps.output-step.outputs.first_pet_id }}
+      second_pet_id: ${{ steps.output-step.outputs.second_pet_id }}
 
   architecture02:
     name: Set up architecture02
