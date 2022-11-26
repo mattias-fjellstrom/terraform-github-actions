@@ -1,3 +1,5 @@
+name: Run a complex Terraform deployment
+
 on:
   push:
     branches:

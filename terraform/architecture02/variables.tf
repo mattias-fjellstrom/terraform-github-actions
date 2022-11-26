@@ -1,3 +1,3 @@
 variable "pet_ids" {
-  type = set(string)
+  type = list(string)
 }
