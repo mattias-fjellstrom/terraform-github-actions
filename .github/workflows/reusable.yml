@@ -31,7 +31,8 @@ jobs:
       - run: terraform validate
       - run: terraform plan -no-color -out "plan.out"
       - run: terraform apply plan.out -no-color
-      - id: output-step
+      - name: Handle output
+        id: output-step
         run: |
           outputs=$(terraform output infrastructure_output)
           echo "infrastructure_output=$outputs" >> $GITHUB_OUTPUT
