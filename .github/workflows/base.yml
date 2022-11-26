@@ -4,11 +4,12 @@ on:
       - "main"
     paths:
       - "terraform/**.tf"
+  workflow_dispatch:
 
 jobs:
   architecture01:
     name: Set up architecture01
-    uses: .github/workflows/reusable.yml
+    uses: ./.github/workflows/reusable.yml
     with:
       working-directory: terraform/architecture01
       parameters: |
@@ -33,7 +34,7 @@ jobs:
 
   architecture02:
     name: Set up architecture02
-    uses: .github/workflows/reusable.yml
+    uses: ./.github/workflows/reusable.yml
     needs: architecture01-outputs
     with:
       working-directory: terraform/architecture02
